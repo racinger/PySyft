@@ -1,3 +1,7 @@
+"""
+This file exists to provide one common place for all serialisation and simplify_ and _detail
+for all tensors (Torch) and collections.
+"""
 from tempfile import TemporaryFile
 from typing import Collection
 from typing import Dict

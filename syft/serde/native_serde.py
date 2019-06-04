@@ -1,3 +1,7 @@
+"""
+This file exists to provide one common place for all serialisation and simplify_ and _detail
+for all native python objects.
+"""
 from syft.workers import AbstractWorker
 from typing import Tuple
 import numpy
