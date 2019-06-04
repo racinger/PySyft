@@ -43,31 +43,31 @@ def test_instantiate_tfe_layer():
     np.testing.assert_allclose(actual, expected, rtol=0.001)
 
 
-def test_share():
-
-    from tensorflow.keras import Sequential
-    from tensorflow.keras.layers import Dense
-
-    hook = sy.KerasHook(tf.keras)
-
-    input_shape = [4, 5]
-    input_data = np.ones(input_shape)
-    kernel = np.random.normal(size=[5, 5])
-    initializer = tf.keras.initializers.Constant(kernel)
-
-    model = Sequential()
-
-    model.add(
-        Dense(5, kernel_initializer=initializer, batch_input_shape=input_shape, use_bias=True)
-    )
-
-    AUTO = True
-    alice = sy.TFEWorker(host="localhost:4000", auto_managed=AUTO)
-    bob = sy.TFEWorker(host="localhost:4001", auto_managed=AUTO)
-    carol = sy.TFEWorker(host="localhost:4002", auto_managed=AUTO)
-
-    model.share(alice, bob, carol)
-
-    model.serve(num_requests=0)
-
-    model.shutdown_workers()
+# def test_share():
+#
+#     from tensorflow.keras import Sequential
+#     from tensorflow.keras.layers import Dense
+#
+#     hook = sy.KerasHook(tf.keras)
+#
+#     input_shape = [4, 5]
+#     input_data = np.ones(input_shape)
+#     kernel = np.random.normal(size=[5, 5])
+#     initializer = tf.keras.initializers.Constant(kernel)
+#
+#     model = Sequential()
+#
+#     model.add(
+#         Dense(5, kernel_initializer=initializer, batch_input_shape=input_shape, use_bias=True)
+#     )
+#
+#     AUTO = True
+#     alice = sy.TFEWorker(host="localhost:4000", auto_managed=AUTO)
+#     bob = sy.TFEWorker(host="localhost:4001", auto_managed=AUTO)
+#     carol = sy.TFEWorker(host="localhost:4002", auto_managed=AUTO)
+#
+#     model.share(alice, bob, carol)
+#
+#     model.serve(num_requests=0)
+#
+#     model.shutdown_workers()

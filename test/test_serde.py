@@ -4,19 +4,19 @@ simple python types which are serializable by standard serialization tools.
 For more on how/why this works, see serde.py directly.
 """
 from syft import serde
-from syft.serde import (
+from syft.serde.serde import (
     _simplify,
     apply_lz4_compression,
     apply_no_compression,
     apply_zstd_compression,
 )
-from syft.serde import serialize
-from syft.serde import deserialize
-from syft.serde import _compress
-from syft.serde import _decompress
-from syft.serde import LZ4
-from syft.serde import NO_COMPRESSION
-from syft.serde import ZSTD
+from syft.serde.serde import serialize
+from syft.serde.serde import deserialize
+from syft.serde.serde import _compress
+from syft.serde.serde import _decompress
+from syft.serde.serde import LZ4
+from syft.serde.serde import NO_COMPRESSION
+from syft.serde.serde import ZSTD
 
 
 import syft
@@ -213,9 +213,9 @@ def test_pointer_tensor_simplify():
 @pytest.mark.parametrize("compress", [True, False])
 def test_torch_Tensor(compress):
     if compress:
-        syft.serde._apply_compress_scheme = apply_lz4_compression
+        syft.serde.serde._apply_compress_scheme = apply_lz4_compression
     else:
-        syft.serde._apply_compress_scheme = apply_no_compression
+        syft.serde.serde._apply_compress_scheme = apply_no_compression
 
     t = Tensor(numpy.random.random((100, 100)))
     t_serialized = serialize(t)
@@ -232,9 +232,9 @@ def test_torch_Tensor_convenience(compress):
     directly on the tensor itself. This tests to makes sure it
     works correctly."""
     if compress:
-        syft.serde._apply_compress_scheme = apply_lz4_compression
+        syft.serde.serde._apply_compress_scheme = apply_lz4_compression
     else:
-        syft.serde._apply_compress_scheme = apply_no_compression
+        syft.serde.serde._apply_compress_scheme = apply_no_compression
 
     t = Tensor(numpy.random.random((100, 100)))
     t_serialized = t.serialize()
@@ -246,9 +246,9 @@ def test_torch_Tensor_convenience(compress):
 def test_tuple(compress):
     # Test with a simple datatype
     if compress:
-        syft.serde._apply_compress_scheme = apply_lz4_compression
+        syft.serde.serde._apply_compress_scheme = apply_lz4_compression
     else:
-        syft.serde._apply_compress_scheme = apply_no_compression
+        syft.serde.serde._apply_compress_scheme = apply_no_compression
 
     tuple = (1, 2)
     tuple_serialized = serialize(tuple)
@@ -271,9 +271,9 @@ def test_tuple(compress):
 @pytest.mark.parametrize("compress", [True, False])
 def test_bytearray(compress):
     if compress:
-        syft.serde._apply_compress_scheme = apply_lz4_compression
+        syft.serde.serde._apply_compress_scheme = apply_lz4_compression
     else:
-        syft.serde._apply_compress_scheme = apply_no_compression
+        syft.serde.serde._apply_compress_scheme = apply_no_compression
 
     bytearr = bytearray("This is a teststring", "utf-8")
     bytearr_serialized = serialize(bytearr)
@@ -289,9 +289,9 @@ def test_bytearray(compress):
 @pytest.mark.parametrize("compress", [True, False])
 def test_ndarray_serde(compress):
     if compress:
-        syft.serde._apply_compress_scheme = apply_lz4_compression
+        syft.serde.serde._apply_compress_scheme = apply_lz4_compression
     else:
-        syft.serde._apply_compress_scheme = apply_no_compression
+        syft.serde.serde._apply_compress_scheme = apply_no_compression
     arr = numpy.random.random((100, 100))
     arr_serialized = serialize(arr)
 
@@ -303,11 +303,11 @@ def test_ndarray_serde(compress):
 @pytest.mark.parametrize("compress_scheme", [LZ4, ZSTD, NO_COMPRESSION])
 def test_compress_decompress(compress_scheme):
     if compress_scheme == LZ4:
-        syft.serde._apply_compress_scheme = apply_lz4_compression
+        syft.serde.serde._apply_compress_scheme = apply_lz4_compression
     elif compress_scheme == ZSTD:
-        syft.serde._apply_compress_scheme = apply_zstd_compression
+        syft.serde.serde._apply_compress_scheme = apply_zstd_compression
     else:
-        syft.serde._apply_compress_scheme = apply_no_compression
+        syft.serde.serde._apply_compress_scheme = apply_no_compression
 
     original = msgpack.dumps([1, 2, 3])
     compressed = _compress(original)
@@ -319,11 +319,11 @@ def test_compress_decompress(compress_scheme):
 @pytest.mark.parametrize("compress_scheme", [LZ4, ZSTD, NO_COMPRESSION])
 def test_compressed_serde(compress_scheme):
     if compress_scheme == LZ4:
-        syft.serde._apply_compress_scheme = apply_lz4_compression
+        syft.serde.serde._apply_compress_scheme = apply_lz4_compression
     elif compress_scheme == ZSTD:
-        syft.serde._apply_compress_scheme = apply_zstd_compression
+        syft.serde.serde._apply_compress_scheme = apply_zstd_compression
     else:
-        syft.serde._apply_compress_scheme = apply_no_compression
+        syft.serde.serde._apply_compress_scheme = apply_no_compression
 
     arr = numpy.random.random((100, 100))
     arr_serialized = serialize(arr)
@@ -341,7 +341,7 @@ def test_invalid_decompression_scheme(compress_scheme):
         # Simulate compression by removing some values
         return decompressed_input[:10], compress_scheme
 
-    syft.serde._apply_compress_scheme = some_other_compression_scheme
+    syft.serde.serde._apply_compress_scheme = some_other_compression_scheme
     arr_serialized = serialize(arr)
     with pytest.raises(CompressionNotFoundException):
         _ = deserialize(arr_serialized)
@@ -351,9 +351,9 @@ def test_invalid_decompression_scheme(compress_scheme):
 def test_dict(compress):
     # Test with integers
     if compress:
-        syft.serde._apply_compress_scheme = apply_lz4_compression
+        syft.serde.serde._apply_compress_scheme = apply_lz4_compression
     else:
-        syft.serde._apply_compress_scheme = apply_no_compression
+        syft.serde.serde._apply_compress_scheme = apply_no_compression
     _dict = {1: 1, 2: 2, 3: 3}
     dict_serialized = serialize(_dict)
     dict_serialized_deserialized = deserialize(dict_serialized)
@@ -397,9 +397,9 @@ def test_range_serde(compress):
 @pytest.mark.parametrize("compress", [True, False])
 def test_list(compress):
     if compress:
-        syft.serde._apply_compress_scheme = apply_lz4_compression
+        syft.serde.serde._apply_compress_scheme = apply_lz4_compression
     else:
-        syft.serde._apply_compress_scheme = apply_no_compression
+        syft.serde.serde._apply_compress_scheme = apply_no_compression
 
     # Test with integers
     _list = [1, 2]
@@ -429,9 +429,9 @@ def test_list(compress):
 @pytest.mark.parametrize("compress", [True, False])
 def test_set(compress):
     if compress:
-        syft.serde._apply_compress_scheme = apply_lz4_compression
+        syft.serde.serde._apply_compress_scheme = apply_lz4_compression
     else:
-        syft.serde._apply_compress_scheme = apply_no_compression
+        syft.serde.serde._apply_compress_scheme = apply_no_compression
 
     # Test with integers
     _set = set([1, 2])
@@ -530,13 +530,13 @@ def test_compressed_float():
 def test_hooked_tensor(compress, compress_scheme):
     if compress:
         if compress_scheme == LZ4:
-            syft.serde._apply_compress_scheme = apply_lz4_compression
+            syft.serde.serde._apply_compress_scheme = apply_lz4_compression
         elif compress_scheme == ZSTD:
-            syft.serde._apply_compress_scheme = apply_zstd_compression
+            syft.serde.serde._apply_compress_scheme = apply_zstd_compression
         else:
-            syft.serde._apply_compress_scheme = apply_no_compression
+            syft.serde.serde._apply_compress_scheme = apply_no_compression
     else:
-        syft.serde._apply_compress_scheme = apply_no_compression
+        syft.serde.serde._apply_compress_scheme = apply_no_compression
 
     t = Tensor(numpy.random.random((100, 100)))
     t_serialized = serialize(t)
@@ -545,7 +545,7 @@ def test_hooked_tensor(compress, compress_scheme):
 
 
 def test_pointer_tensor(hook, workers):
-    syft.serde._apply_compress_scheme = serde.apply_no_compression
+    syft.serde.serde._apply_compress_scheme = serde.serde.apply_no_compression
     t = pointers.PointerTensor(
         id=1000, location=workers["alice"], owner=workers["alice"], id_at_location=12345
     )
@@ -569,8 +569,8 @@ def test_pointer_tensor_detail(id):
 
 
 def test_numpy_tensor_serde():
-    syft.serde._serialize_tensor = syft.serde.numpy_tensor_serializer
-    syft.serde._deserialize_tensor = syft.serde.numpy_tensor_deserializer
+    syft.serde.torch_serde._serialize_tensor = syft.serde.torch_serde.numpy_tensor_serializer
+    syft.serde.torch_serde._deserialize_tensor = syft.serde.torch_serde.numpy_tensor_deserializer
 
     tensor = torch.tensor(numpy.random.random((10, 10)), requires_grad=False)
 
@@ -578,8 +578,8 @@ def test_numpy_tensor_serde():
     tensor_deserialized = deserialize(tensor_serialized)
 
     # Back to Pytorch serializer
-    syft.serde._serialize_tensor = syft.serde.torch_tensor_serializer
-    syft.serde._deserialize_tensor = syft.serde.torch_tensor_deserializer
+    syft.serde.torch_serde._serialize_tensor = syft.serde.torch_serde.torch_tensor_serializer
+    syft.serde.torch_serde._deserialize_tensor = syft.serde.torch_serde.torch_tensor_deserializer
 
     assert torch.eq(tensor_deserialized, tensor).all()
 
@@ -591,8 +591,8 @@ def test_additive_sharing_tensor_serde(compress, workers):
     x = torch.tensor([[3.1, 4.3]]).fix_prec().share(alice, bob, crypto_provider=james)
 
     additive_sharing_tensor = x.child.child.child
-    data = syft.serde._simplify_additive_shared_tensor(additive_sharing_tensor)
-    additive_sharing_tensor_reconstructed = syft.serde._detail_additive_shared_tensor(
+    data = syft.serde.serde._simplify_additive_shared_tensor(additive_sharing_tensor)
+    additive_sharing_tensor_reconstructed = syft.serde.serde._detail_additive_shared_tensor(
         syft.hook.local_worker, data
     )
 
@@ -606,9 +606,9 @@ def test_additive_sharing_tensor_serde(compress, workers):
 def test_serde_object_wrapper_int():
     obj = 4
     obj_wrapper = pointers.ObjectWrapper(obj, id=100)
-    msg = serde.serialize(obj_wrapper)
+    msg = serde.serde.serialize(obj_wrapper)
 
-    obj_wrapper_received = serde.deserialize(msg)
+    obj_wrapper_received = serde.serde.deserialize(msg)
 
     assert obj_wrapper.obj == obj_wrapper_received.obj
     assert obj_wrapper.id == obj_wrapper_received.id

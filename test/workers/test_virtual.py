@@ -80,7 +80,7 @@ def test_recv_msg():
 
     # create/serialize message
     msg = (MSGTYPE.OBJ, obj)
-    bin_msg = serde.serialize(msg)
+    bin_msg = serde.serde.serialize(msg)
 
     # have alice receive message
     alice.recv_msg(bin_msg)
@@ -94,12 +94,12 @@ def test_recv_msg():
     msg = (MSGTYPE.OBJ_REQ, obj.id)
 
     # serialize message
-    bin_msg = serde.serialize(msg)
+    bin_msg = serde.serde.serialize(msg)
 
     # call receive message on alice
     resp = alice.recv_msg(bin_msg)
 
-    obj_2 = serde.deserialize(resp)
+    obj_2 = serde.serde.deserialize(resp)
 
     # assert that response is correct type
     assert type(resp) == bytes
